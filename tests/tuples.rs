@@ -1,6 +1,8 @@
-use std::{collections::HashMap, ops::Neg};
+use std::collections::HashMap;
+use std::io;
 
-use cucumber::{given, then, World};
+use cucumber::writer::*;
+use cucumber::{given, then, writer, World};
 
 // Need to explicitly add path to mod.
 // Not idiomatic Rust, but work around for TDD Cucumber.
@@ -13,11 +15,6 @@ use tuple::*;
 // Cucumber constructs it via `Default::default()` for each scenario.
 #[derive(Debug, Default, World)]
 pub struct TupleWorld {
-    tuple: Tuple,
-    point: Point,
-    vector: Vector,
-    a1: Tuple,
-    a2: Tuple,
     tuples: HashMap<String, Tuple>,
 }
 
@@ -88,7 +85,7 @@ fn is_not_a_vector(world: &mut TupleWorld, key: String, tuple: String) {
 
 #[then(expr = "{word} = tuple[{float}, {float}, {float}, {float}]")]
 fn p_equals(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64, w: f64) {
-    let mut n: Tuple = *world.tuples.get(&key).unwrap();
+    let n: Tuple = *world.tuples.get(&key).unwrap();
     assert!(n.x == x);
     assert!(n.y == y);
     assert!(n.z == z);
@@ -96,7 +93,7 @@ fn p_equals(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64, w: f64)
 }
 #[then(expr = "- {word} = tuple[{float}, {float}, {float}, {float}]")]
 fn neg_equals(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64, w: f64) {
-    let mut n: Tuple = -*world.tuples.get(&key).unwrap();
+    let n: Tuple = -*world.tuples.get(&key).unwrap();
     assert!(n.x == x);
     assert!(n.y == y);
     assert!(n.z == z);
@@ -113,8 +110,7 @@ fn tuple_add_equals(
     z: f64,
     w: f64,
 ) {
-    let n: Tuple =
-        *world.tuples.get(&key1).unwrap() + *world.tuples.get_mut(&key2).unwrap();
+    let n: Tuple = *world.tuples.get(&key1).unwrap() + *world.tuples.get_mut(&key2).unwrap();
     assert!(n.x == x);
     assert!(n.y == y);
     assert!(n.z == z);
@@ -129,22 +125,70 @@ fn point_minus_equals(
     f_or_v: String,
     x: f64,
     y: f64,
-    z: f64
+    z: f64,
 ) {
-    let n: Tuple =
-        *world.tuples.get(&key1).unwrap() - *world.tuples.get_mut(&key2).unwrap();
+    let n: Tuple = *world.tuples.get(&key1).unwrap() - *world.tuples.get_mut(&key2).unwrap();
     assert!(n.x == x);
     assert!(n.y == y);
     assert!(n.z == z);
-    let w = if f_or_v == "vector" {0.0} else {1.0};
+    let w = if f_or_v == "vector" { 0.0 } else { 1.0 };
     assert!(n.w == w);
 }
 
+#[then(expr = "{word} * {float} = tuple[{float}, {float}, {float}, {float}]")]
+fn tuple_scalar_equals(
+    world: &mut TupleWorld,
+    key: String,
+    scalar: f64,
+    x: f64,
+    y: f64,
+    z: f64,
+    w: f64,
+) {
+    let n: Tuple = *world.tuples.get(&key).unwrap() * scalar;
+    assert!(n.x == x);
+    assert!(n.y == y);
+    assert!(n.z == z);
+    assert!(n.w == w);
+}
+
+#[then(expr = "{word} \\/ {float} = tuple[{float}, {float}, {float}, {float}]")]
+fn tuple_div_equals(
+    world: &mut TupleWorld,
+    key: String,
+    scalar: f64,
+    x: f64,
+    y: f64,
+    z: f64,
+    w: f64,
+) {
+    let n: Tuple = *world.tuples.get(&key).unwrap() / scalar;
+    assert!(n.x == x);
+    assert!(n.y == y);
+    assert!(n.z == z);
+    assert!(n.w == w);
+}
+
+#[then(expr = "magnitude[{word}] = {float}")]
+fn tuple_magnitude_equals(world: &mut TupleWorld, key: String, answer: f64) {
+    let n: f64 = world.tuples.get(&key).unwrap().magnitude();
+    assert!(n == answer);
+}
 
 // This runs before everything else, so you can setup things here.
-fn main() {
+#[tokio::main]
+async fn main() {
     // You may choose any executor you like (`tokio`, `async-std`, etc.).
     // You may even have an `async` main, it doesn't matter. The point is that
     // Cucumber is composable. :)
     futures::executor::block_on(TupleWorld::run("tests/features/tuples.feature"));
+    // TupleWorld::cucumber()
+    // .max_concurrent_scenarios(1)
+    // .with_writer(
+    //     writer::Basic::raw(io::stdout(), writer::Coloring::Never, 0)
+    //         .summarized()
+    //         .assert_normalized(),
+    // )
+    // .run_and_exit("tests/features/tuples.feature")
+    // .await;
 }

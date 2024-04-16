@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Neg};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub struct Tuple {
@@ -20,6 +20,8 @@ pub const fn vector(x: f64, y: f64, z: f64) -> Point {
 pub const fn point(x: f64, y: f64, z: f64) -> Vector {
     Vector { x, y, z, w: 1.0 }
 }
+
+/*  Operator overloading */
 
 impl Add for Tuple {
     type Output = Self;
@@ -52,10 +54,44 @@ impl Neg for Tuple {
 
     fn neg(self) -> Self {
         Self {
-            x: -self.x, 
+            x: -self.x,
             y: -self.y,
             z: -self.z,
             w: -self.w,
         }
+    }
+}
+
+impl Mul<f64> for Tuple {
+    type Output = Self;
+
+    fn mul(self, other: f64) -> Self {
+        Self {
+            x: self.x * other,
+            y: self.y * other,
+            z: self.z * other,
+            w: self.w * other,
+        }
+    }
+}
+
+impl Div<f64> for Tuple {
+    type Output = Self;
+
+    fn div(self, other: f64) -> Self {
+        Self {
+            x: self.x / other,
+            y: self.y / other,
+            z: self.z / other,
+            w: self.w / other,
+        }
+    }
+}
+
+/* Method implementations */
+
+impl Tuple {
+    pub fn magnitude(self) -> f64 {
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2)).sqrt()
     }
 }
