@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::io;
 
 use cucumber::writer::*;
-use cucumber::{given, then, writer, World};
+use cucumber::{given, then, when, writer, World};
 
 // Need to explicitly add path to mod.
 // Not idiomatic Rust, but work around for TDD Cucumber.
@@ -35,6 +35,14 @@ fn create_point(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
 #[given(expr = "{word} <- vector[{float}, {float}, {float}]")]
 fn create_vector(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
     world.tuples.insert(key, vector(x, y, z));
+    ()
+}
+
+#[when(expr = "{word} <- normalize[{word}]")]
+fn normalize_vector(world: &mut TupleWorld, key: String, vec: String) {
+    world
+        .tuples
+        .insert(key, world.tuples.get(&vec).unwrap().normalize());
     ()
 }
 
@@ -175,20 +183,40 @@ fn tuple_magnitude_equals(world: &mut TupleWorld, key: String, answer: f64) {
     assert!(n == answer);
 }
 
+#[then(expr = "normalizing[{word}] = vector[{float}, {float}, {float}]")]
+fn tuple_normalize_equals(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
+    let n: Tuple = world.tuples.get(&key).unwrap().normalize();
+    dbg!("{:?}", n);
+    assert!(n.x == x);
+    assert!(n.y == y);
+    assert!(n.z == z);
+}
+
+#[then(expr = "dot[{word}, {word}] = {float}")]
+fn tuple_dot_equals(world: &mut TupleWorld, key1: String, key2: String, answer: f64) {
+    let n: f64 = world
+        .tuples
+        .get(&key1)
+        .unwrap()
+        .dot(*world.tuples.get(&key2).unwrap());
+
+    assert!(n == answer);
+}
+
+#[then(expr = "cross[{word}, {word}] = vector[{float}, {float}, {float}]")]
+fn tuple_cross_equals(world: &mut TupleWorld, key1: String, key2: String, x: f64, y: f64, z: f64) {
+    let n: Tuple = world
+        .tuples
+        .get(&key1)
+        .unwrap()
+        .cross(*world.tuples.get(&key2).unwrap());
+
+    assert!(n.x == x);
+    assert!(n.y == y);
+    assert!(n.z == z);
+}
+
 // This runs before everything else, so you can setup things here.
-#[tokio::main]
 async fn main() {
-    // You may choose any executor you like (`tokio`, `async-std`, etc.).
-    // You may even have an `async` main, it doesn't matter. The point is that
-    // Cucumber is composable. :)
     futures::executor::block_on(TupleWorld::run("tests/features/tuples.feature"));
-    // TupleWorld::cucumber()
-    // .max_concurrent_scenarios(1)
-    // .with_writer(
-    //     writer::Basic::raw(io::stdout(), writer::Coloring::Never, 0)
-    //         .summarized()
-    //         .assert_normalized(),
-    // )
-    // .run_and_exit("tests/features/tuples.feature")
-    // .await;
 }
