@@ -1,3 +1,4 @@
+use float_cmp::approx_eq;
 use std::collections::HashMap;
 use std::io;
 
@@ -180,16 +181,15 @@ fn tuple_div_equals(
 #[then(expr = "magnitude[{word}] = {float}")]
 fn tuple_magnitude_equals(world: &mut TupleWorld, key: String, answer: f64) {
     let n: f64 = world.tuples.get(&key).unwrap().magnitude();
-    assert!(n == answer);
+    assert!(approx_eq!(f64, n, answer, epsilon = tuple::EPSILON));
 }
 
 #[then(expr = "normalizing[{word}] = vector[{float}, {float}, {float}]")]
 fn tuple_normalize_equals(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
     let n: Tuple = world.tuples.get(&key).unwrap().normalize();
-    dbg!("{:?}", n);
-    assert!(n.x == x);
-    assert!(n.y == y);
-    assert!(n.z == z);
+    assert!(approx_eq!(f64, n.x, x, epsilon = tuple::EPSILON));
+    assert!(approx_eq!(f64, n.y, y, epsilon = tuple::EPSILON));
+    assert!(approx_eq!(f64, n.z, z, epsilon = tuple::EPSILON));
 }
 
 #[then(expr = "dot[{word}, {word}] = {float}")]
@@ -217,6 +217,6 @@ fn tuple_cross_equals(world: &mut TupleWorld, key1: String, key2: String, x: f64
 }
 
 // This runs before everything else, so you can setup things here.
-async fn main() {
+fn main() {
     futures::executor::block_on(TupleWorld::run("tests/features/tuples.feature"));
 }

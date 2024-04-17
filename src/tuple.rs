@@ -8,7 +8,7 @@ pub struct Tuple {
     pub w: f64,
 }
 
-const EPSILON: f64 = 0.00001;
+pub const EPSILON: f64 = 0.00001;
 
 pub type Vector = Tuple;
 pub type Point = Tuple;

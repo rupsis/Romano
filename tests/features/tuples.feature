@@ -77,11 +77,11 @@ Feature: Tuple feature
 
   Scenario: Computing the magnitude of vector[1, 2, 3]
     Given v <- vector[1, 2, 3]
-    Then magnitude[v] = 3.7416573867739413
+    Then magnitude[v] = 3.74165
 
   Scenario: Computing the magnitude of vector[-1, -2, -3]
     Given v <- vector[-1, -2, -3]
-    Then magnitude[v] = 3.7416573867739413
+    Then magnitude[v] = 3.74165
 
   Scenario: Normalizing vector[4, 0, 0] gives [1, 0, 0]
     Given v <- vector[4, 0, 0]
@@ -89,7 +89,7 @@ Feature: Tuple feature
 
   Scenario: Normalizing vector[1, 2, 3]
     Given v <- vector[1, 2, 3]
-    Then normalizing[v] = vector[0.2672612419124244, 0.5345224838248488, 0.8017837257372732]
+    Then normalizing[v] = vector[0.26726, 0.53452, 0.80178]
 
   Scenario: Normalizing vector[4, 0, 0] gives [1, 0, 0]
     Given v <- vector[1, 2, 3]
