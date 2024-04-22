@@ -26,7 +26,6 @@ pub struct ColorWorld {
 #[given(expr = "{word} <- color[{float}, {float}, {float}]")]
 fn create_color(world: &mut ColorWorld, key: String, r: f64, g: f64, b: f64) {
     world.tuples.insert(key, Color { r, g, b });
-    ()
 }
 
 /* Thens */

@@ -1,9 +1,7 @@
 use float_cmp::approx_eq;
 use std::collections::HashMap;
-use std::io;
 
-use cucumber::writer::*;
-use cucumber::{given, then, when, writer, World};
+use cucumber::{given, then, when, World};
 
 // Need to explicitly add path to mod.
 // Not idiomatic Rust, but work around for TDD Cucumber.
@@ -24,19 +22,16 @@ pub struct TupleWorld {
 #[given(expr = "{word} <- tuple[{float}, {float}, {float}, {float}]")]
 fn create_tuple(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64, w: f64) {
     world.tuples.insert(key, Tuple { x, y, z, w });
-    ()
 }
 
 #[given(expr = "{word} <- point[{float}, {float}, {float}]")]
 fn create_point(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
     world.tuples.insert(key, point(x, y, z));
-    ()
 }
 
 #[given(expr = "{word} <- vector[{float}, {float}, {float}]")]
 fn create_vector(world: &mut TupleWorld, key: String, x: f64, y: f64, z: f64) {
     world.tuples.insert(key, vector(x, y, z));
-    ()
 }
 
 #[when(expr = "{word} <- normalize[{word}]")]
@@ -44,7 +39,6 @@ fn normalize_vector(world: &mut TupleWorld, key: String, vec: String) {
     world
         .tuples
         .insert(key, world.tuples.get(&vec).unwrap().normalize());
-    ()
 }
 
 /* Thens */
