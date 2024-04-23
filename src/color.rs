@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Default, Debug, Copy, Clone, PartialEq)]
 pub struct Color {
@@ -7,8 +7,22 @@ pub struct Color {
     pub b: f64,
 }
 
-pub const fn color(r: f64, g: f64, b: f64) -> Color {
-    Color { r, g, b }
+fn clip_color(color_channel: f64) -> f64 {
+    if color_channel < 0.0 {
+        return 0.0;
+    }
+    if color_channel > 255.0 {
+        return 255.0;
+    }
+    color_channel
+}
+
+pub fn color(r: f64, g: f64, b: f64) -> Color {
+    Color {
+        r: clip_color(r),
+        g: clip_color(g),
+        b: clip_color(b),
+    }
 }
 
 /*  Operator overloading */
@@ -17,11 +31,7 @@ impl Add for Color {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        Self {
-            r: self.r + other.r,
-            g: self.g + other.g,
-            b: self.b + other.b,
-        }
+        color(self.r + other.r, self.g + other.g, self.b + other.b)
     }
 }
 
@@ -29,11 +39,7 @@ impl Sub for Color {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        Self {
-            r: self.r - other.r,
-            g: self.g - other.g,
-            b: self.b - other.b,
-        }
+        color(self.r - other.r, self.g - other.g, self.b - other.b)
     }
 }
 
@@ -41,11 +47,7 @@ impl Mul<f64> for Color {
     type Output = Self;
 
     fn mul(self, scalar: f64) -> Self {
-        Self {
-            r: self.r * scalar,
-            g: self.g * scalar,
-            b: self.b * scalar,
-        }
+        color(self.r * scalar, self.g * scalar, self.b * scalar)
     }
 }
 
@@ -53,11 +55,7 @@ impl Mul for Color {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        Self {
-            r: self.r * other.r,
-            g: self.g * other.g,
-            b: self.b * other.b,
-        }
+        color(self.r * other.r, self.g * other.g, self.b * other.b)
     }
 }
 
@@ -70,10 +68,6 @@ impl Color {
 
     pub fn normalize(self) -> Self {
         let mag: f64 = self.magnitude();
-        Self {
-            r: self.r / mag,
-            g: self.g / mag,
-            b: self.b / mag,
-        }
+        color(self.r / mag, self.g / mag, self.b / mag)
     }
 }

@@ -13,4 +13,28 @@ Feature: Canvas feature
     Then pixel_at[2, 3] = red
 
 
+  Scenario: Constructing the PPM heeader
+   Given c <- canvas[5, 3]
+   When ppm <- to_ppm
+   Then lines 1-3 of ppm are
+   """
+   P3
+   5 3
+   255
+   """ 
 
+   Scenario: Constructing the PPM pixel data
+   Given c <- canvas[5, 3]
+   And c1 <- color[1.5, 0, 0]
+   And c2 <- color[0, 0.5, 0]
+   And c3 <- color[-0.5, 0, 1] 
+   When write_pixel[0, 0, c1]
+   And write_pixel[2, 1, c2]
+   And write_pixel[4, 2, c3]
+   And ppm <- to_ppm
+   Then lines 4-6 of ppm are
+   """
+   255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
+   """
