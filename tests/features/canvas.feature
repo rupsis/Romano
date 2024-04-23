@@ -6,6 +6,7 @@ Feature: Canvas feature
     And c.height = 20
     And every pixel of c is color[0.0, 0.0, 0.0]
 
+@test
   Scenario: Writing pixels to a canvas
     Given c <- canvas[10, 20]
     And red <- color[1.0, 0.0, 0.0]
@@ -24,17 +25,18 @@ Feature: Canvas feature
    """ 
 
    Scenario: Constructing the PPM pixel data
-   Given c <- canvas[5, 3]
-   And c1 <- color[1.5, 0, 0]
-   And c2 <- color[0, 0.5, 0]
-   And c3 <- color[-0.5, 0, 1] 
+   Given c <- canvas[2, 2]
+   And c1 <- color[1.5, 0.0, 0.0]
+   And c2 <- color[0.0, 0.5, 0.0]
+   And c3 <- color[-0.5, 0.0, 1] 
    When write_pixel[0, 0, c1]
-   And write_pixel[2, 1, c2]
-   And write_pixel[4, 2, c3]
+   And write_pixel[1, 0, c2]
+   And write_pixel[0, 1, c3]
    And ppm <- to_ppm
-   Then lines 4-6 of ppm are
+   Then lines 4-7 of ppm are
    """
-   255 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 128 0 0 0 0 0 0 0
-   0 0 0 0 0 0 0 0 0 0 0 0 0 0 255
+   255 0 0
+   0 128 0
+   0 0 255
+   0 0 0
    """

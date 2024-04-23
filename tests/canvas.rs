@@ -1,4 +1,3 @@
-use float_cmp::approx_eq;
 use std::collections::HashMap;
 use std::io;
 
@@ -18,8 +17,6 @@ mod color;
 
 use color::*;
 
-// `World` is your shared, likely mutable state.
-// Cucumber constructs it via `Default::default()` for each scenario.
 #[derive(Debug, Default, World)]
 pub struct CanvasWorld {
     canvas: Canvas,
@@ -99,29 +96,16 @@ fn test_ppm_header(world: &mut CanvasWorld, step: &Step) {
     );
 }
 
-#[then(expr = "lines 4-6 of ppm are")]
+#[then(expr = "lines 4-7 of ppm are")]
 fn test_ppm_body(world: &mut CanvasWorld, step: &Step) {
     dbg!(strip_newlines(step.docstring.as_ref().unwrap()));
-    dbg!(world.ppm.lines().take(3).collect::<Vec<&str>>().join("\n"));
+    dbg!(world.ppm.lines().skip(3).collect::<Vec<&str>>().join("\n"));
     assert!(
         strip_newlines(step.docstring.as_ref().unwrap())
-            == world.ppm.lines().take(3).collect::<Vec<&str>>().join("\n")
+            == world.ppm.lines().skip(3).collect::<Vec<&str>>().join("\n")
     );
 }
 
-// fn main() {
-//     futures::executor::block_on(CanvasWorld::run("tests/features/canvas.feature"));
-// }
-
-#[tokio::main]
-async fn main() {
-    CanvasWorld::cucumber()
-        .max_concurrent_scenarios(1)
-        .with_writer(
-            writer::Basic::raw(io::stdout(), writer::Coloring::Never, 0)
-                .summarized()
-                .assert_normalized(),
-        )
-        .run_and_exit("tests/features/canvas.feature")
-        .await;
+fn main() {
+    futures::executor::block_on(CanvasWorld::run("tests/features/canvas.feature"));
 }
