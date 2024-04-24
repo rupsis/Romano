@@ -27,13 +27,16 @@ impl Canvas {
         self.pixels[((self.width * y) + x) as usize]
     }
 
+    /* opting to write single pixel lines rather than
+     *  manage 70 character lines. Images will be converted
+     *  to png (etc) anyways.
+     */
     pub fn to_ppm(&self) -> String {
         let header = format!("P3\n{} {}\n255", self.width, self.height);
 
         let mut pixels: String = String::new();
 
         for pixel in self.pixels.iter() {
-            dbg!(&pixel.write_color());
             pixels.push_str(&pixel.write_color());
         }
 

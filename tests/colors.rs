@@ -56,7 +56,6 @@ fn tuple_add_equals(world: &mut ColorWorld, key1: String, key2: String, r: f64, 
 #[then(expr = "{word} - {word} = color[{float}, {float}, {float}]")]
 fn color_minus_equals(world: &mut ColorWorld, key1: String, key2: String, r: f64, g: f64, b: f64) {
     let n: Color = *world.tuples.get(&key1).unwrap() - *world.tuples.get(&key2).unwrap();
-    dbg!("{:?}", n);
     assert!(approx_eq!(f64, n.r, r, epsilon = tuple::EPSILON));
     assert!(approx_eq!(f64, n.g, g, epsilon = tuple::EPSILON));
     assert!(approx_eq!(f64, n.b, b, epsilon = tuple::EPSILON));

@@ -98,8 +98,6 @@ fn test_ppm_header(world: &mut CanvasWorld, step: &Step) {
 
 #[then(expr = "lines 4-7 of ppm are")]
 fn test_ppm_body(world: &mut CanvasWorld, step: &Step) {
-    dbg!(strip_newlines(step.docstring.as_ref().unwrap()));
-    dbg!(world.ppm.lines().skip(3).collect::<Vec<&str>>().join("\n"));
     assert!(
         strip_newlines(step.docstring.as_ref().unwrap())
             == world.ppm.lines().skip(3).collect::<Vec<&str>>().join("\n")
