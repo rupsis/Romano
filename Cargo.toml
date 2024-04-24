@@ -9,13 +9,21 @@ edition = "2021"
 
 
 [dev-dependencies]
-cucumber = "0.20.2"
+cucumber = "0.21.0"
 futures = "0.3"
 tracing = "0.1"
+float-cmp = "0.9.0"
 tokio = { version = "1.10", features = ["macros", "rt-multi-thread", "time"] }
 
 
 [[test]]
 name = "tuples"
 harness = false
- 
+
+[[test]]
+name = "colors"
+harness = false
+
+[[test]]
+name = "canvas"
+harness = false
